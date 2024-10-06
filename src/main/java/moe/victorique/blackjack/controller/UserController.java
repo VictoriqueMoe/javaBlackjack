@@ -15,11 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/game")
@@ -34,13 +37,26 @@ public class UserController {
         this.service = service;
     }
 
+    @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseMsg> hit(
+            @RequestParam Optional<UUID> token,
+            final HttpServletRequest request
+    ) {
+        final var deviceId = getDeviceId(request);
+        return this.service.getActiveGame(deviceId, token)
+                .map(service::hit)
+                .map(this::buildFromGame)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No active game found"));
+    }
+
     @GetMapping(value = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseMsg> deal(final HttpServletRequest request) {
         final var deviceId = getDeviceId(request);
 
         this.logger.info("DEAL: {}", deviceId);
 
-        return service.getActiveGame(deviceId)
+        return service.getActiveGame(deviceId, Optional.empty())
                 .or(() -> Optional.of(this.service.newGame(deviceId)))
                 .map(this::buildFromGame)
                 .map(ResponseEntity::ok)
@@ -58,7 +74,7 @@ public class UserController {
     }
 
     private ResponseMsg buildFromGame(final Game game) {
-        return ResponseMsg.fromGame(game, this.service.calculateScore(game.playerCards), 0);
+        return ResponseMsg.fromGame(game, this.service.calculateScore(game.playerCards), 0, List.of());
     }
 
     private ResponseMsg buildFromGame(
@@ -66,6 +82,6 @@ public class UserController {
             final int handValue,
             final int dealerValue
     ) {
-        return ResponseMsg.fromGame(game, handValue, dealerValue);
+        return ResponseMsg.fromGame(game, handValue, dealerValue, game.deck);
     }
 }

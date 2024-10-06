@@ -18,13 +18,14 @@ public record ResponseMsg(
     public static ResponseMsg fromGame(
             final Game game,
             final int handValue,
-            final int dealerValue
+            final int dealerValue,
+            final List<String> deck
     ) {
         return new ResponseMsg(
                 game.token,
                 game.device,
                 game.playerCards,
-                game.deck,
+                deck,
                 handValue,
                 dealerValue,
                 game.status

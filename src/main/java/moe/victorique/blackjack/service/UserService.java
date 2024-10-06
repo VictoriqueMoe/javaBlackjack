@@ -82,8 +82,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void hit(Game game) {
-
+    public Game hit(Game game) {
+        return null;
     }
 
     @Override
@@ -92,8 +92,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Optional<Game> getActiveGame(final String deviceId) {
-        return this.repo.findByDeviceAndStatus(deviceId, PlayStatus.Playing);
+    public Optional<Game> getActiveGame(final String deviceId, final Optional<UUID> token) {
+        final PlayStatus status = PlayStatus.Playing;
+        return token
+                .map(t -> this.repo.findByTokenAndStatus(t, status))
+                .orElseGet(() -> this.repo.findByDeviceAndStatus(deviceId, status));
     }
 
     @Override
