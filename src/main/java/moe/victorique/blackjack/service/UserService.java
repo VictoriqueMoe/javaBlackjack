@@ -55,7 +55,30 @@ public class UserService implements IUserService {
 
     @Override
     public int calculateScore(List<String> cards) {
-        return 0;
+        var retVal = 0;
+        var hasAce = false;
+        for (final var card : cards) {
+            retVal += getNumberFromCard(card);
+            if (card.contains("J") || card.contains("Q") || card.contains("K")) {
+                retVal += 10;
+                continue;
+            }
+            if (card.contains("A")) {
+                hasAce = true;
+            }
+        }
+        if (hasAce) {
+            for (final var card : cards) {
+                if (card.contains("A")) {
+                    if (retVal + 11 > 21) {
+                        retVal += 1;
+                    } else {
+                        retVal += 11;
+                    }
+                }
+            }
+        }
+        return retVal;
     }
 
     @Override
@@ -102,6 +125,14 @@ public class UserService implements IUserService {
         game.dealerCards.add(game.deck.removeLast());
         game.playerCards.add(game.deck.removeLast());
         game.dealerCards.add(game.deck.removeLast());
+    }
+
+    private int getNumberFromCard(final String card) {
+        try {
+            return Integer.parseInt(card.replaceAll("[^0-9]", ""));
+        } catch (final NumberFormatException e) {
+            return 0;
+        }
     }
 
 }
