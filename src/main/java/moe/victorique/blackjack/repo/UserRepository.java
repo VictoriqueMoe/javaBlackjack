@@ -13,4 +13,5 @@ public interface UserRepository extends CrudRepository<Game, Long> {
     Optional<Game> findByDeviceAndStatus(final String device, final PlayStatus status);
 
     Optional<Game> findByTokenAndStatus(final UUID token, final PlayStatus status);
+
 }

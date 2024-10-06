@@ -3,6 +3,8 @@ package moe.victorique.blackjack.service;
 import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.entity.Game;
 import moe.victorique.blackjack.repo.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @Service
 public class UserService implements IUserService {
+
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository repo;
 
@@ -83,7 +87,18 @@ public class UserService implements IUserService {
 
     @Override
     public Game hit(Game game) {
-        return null;
+        game.playerCards.add(game.deck.removeLast());
+        this.logger.info("HIT: {}", game.token);
+
+        if (this.calculateScore(game.playerCards) > 21) {
+            game.status = PlayStatus.Bust;
+            this.logger.info("BUST");
+        }
+
+        if (game.status == PlayStatus.Bust) {
+
+        }
+
     }
 
     @Override
@@ -136,6 +151,10 @@ public class UserService implements IUserService {
         } catch (final NumberFormatException e) {
             return 0;
         }
+    }
+
+    private Game doBust(final Game game) {
+
     }
 
 }

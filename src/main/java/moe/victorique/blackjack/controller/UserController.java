@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseMsg> hit(
-            @RequestParam Optional<UUID> token,
+            final @RequestParam Optional<UUID> token,
             final HttpServletRequest request
     ) {
         final var deviceId = getDeviceId(request);
