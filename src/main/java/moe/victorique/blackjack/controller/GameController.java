@@ -2,10 +2,10 @@ package moe.victorique.blackjack.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import moe.victorique.blackjack.dto.ResponseMsg;
 import moe.victorique.blackjack.entity.Game;
 import moe.victorique.blackjack.service.IUserService;
-import moe.victorique.blackjack.service.UserService;
 import moe.victorique.blackjack.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +26,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/game")
-public class UserController {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class GameController {
 
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     private final IUserService service;
-
-    @Autowired
-    public UserController(final UserService service) {
-        this.service = service;
-    }
 
     @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseMsg> hit(

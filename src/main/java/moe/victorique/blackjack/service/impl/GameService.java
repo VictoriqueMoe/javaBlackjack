@@ -1,8 +1,11 @@
-package moe.victorique.blackjack.service;
+package moe.victorique.blackjack.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import moe.victorique.blackjack.constants.Action;
 import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.entity.Game;
-import moe.victorique.blackjack.repo.UserRepository;
+import moe.victorique.blackjack.repo.GameRepository;
+import moe.victorique.blackjack.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +18,14 @@ import java.util.UUID;
 
 
 @Service
-public class UserService implements IUserService {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class GameService implements IUserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    private final UserRepository repo;
+    private final GameRepository repo;
+
+    private final StatService statService;
 
     private final List<Character> suites = List.of(
             '♠',
@@ -44,13 +50,8 @@ public class UserService implements IUserService {
             "K"
     );
 
-    @Autowired
-    public UserService(final UserRepository repo) {
-        this.repo = repo;
-    }
-
     @Override
-    public Game newGame(String deviceId) {
+    public Game newGame(final String deviceId) {
         var newGame = new Game(deviceId, PlayStatus.Playing);
         this.createDeck(newGame);
         this.deal(newGame);
@@ -58,7 +59,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public int calculateScore(List<String> cards) {
+    public int calculateScore(final List<String> cards) {
         var retVal = 0;
         var hasAce = false;
         for (final var card : cards) {
@@ -86,7 +87,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Game hit(Game game) {
+    public Game hit(final Game game) {
         game.playerCards.add(game.deck.removeLast());
         this.logger.info("HIT: {}", game.token);
 
@@ -96,14 +97,41 @@ public class UserService implements IUserService {
         }
 
         if (game.status == PlayStatus.Bust) {
-
+            return this.doBust(game);
         }
 
+        return this.repo.save(game);
     }
 
     @Override
-    public Pair<Integer, Integer> stay(Game game) {
-        return null;
+    public Pair<Game, Pair<Integer, Integer>> stay(final Game game) {
+        while (this.calculateScore(game.dealerCards) < 17) {
+            game.dealerCards.add(game.deck.removeLast());
+        }
+
+        final var playerScore = this.calculateScore(game.playerCards);
+        final var dealerScore = this.calculateScore(game.dealerCards);
+
+        if (dealerScore > 21) {
+            game.status = PlayStatus.DealerBust;
+            this.logger.info("DEALER BUST");
+            this.statService.updateStats(game.device, Action.WIN);
+        } else if (playerScore > dealerScore) {
+            game.status = PlayStatus.PlayerWins;
+            this.logger.info("WIN");
+            this.statService.updateStats(game.device, Action.WIN);
+        } else if (dealerScore > playerScore) {
+            game.status = PlayStatus.DealerWins;
+            this.logger.info("LOSE");
+            this.statService.updateStats(game.device, Action.LOSE);
+        } else {
+            game.status = PlayStatus.Draw;
+            this.logger.info("DRAW");
+            this.statService.updateStats(game.device, Action.DRAW);
+        }
+
+        return Pair.of(this.repo.save(game), Pair.of(playerScore, dealerScore));
+
     }
 
     @Override
@@ -115,16 +143,16 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Optional<Game> getGameFromToken(UUID token) {
-        return Optional.empty();
+    public Optional<Game> getGameFromToken(final UUID token) {
+        return this.repo.findById(token);
     }
 
     @Override
-    public List<Game> getAllGames(String deviceId) {
-        return List.of();
+    public List<Game> getAllGames(final String deviceId) {
+        return this.repo.findAllByDeviceAndStatusNot(deviceId, PlayStatus.Playing);
     }
 
-    private void createDeck(Game game) {
+    private void createDeck(final Game game) {
         for (final var suite : this.suites) {
             for (final var face : this.faces) {
                 game.deck.add(suite + face);
@@ -138,7 +166,7 @@ public class UserService implements IUserService {
         }
     }
 
-    private void deal(Game game) {
+    private void deal(final Game game) {
         game.playerCards.add(game.deck.removeLast());
         game.dealerCards.add(game.deck.removeLast());
         game.playerCards.add(game.deck.removeLast());
@@ -154,7 +182,8 @@ public class UserService implements IUserService {
     }
 
     private Game doBust(final Game game) {
-
+        statService.updateStats(game.device, Action.LOSE);
+        return repo.save(game);
     }
 
 }

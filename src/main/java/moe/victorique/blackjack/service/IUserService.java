@@ -14,7 +14,7 @@ public interface IUserService {
 
     Game hit(final Game game);
 
-    Pair<Integer, Integer> stay(final Game game);
+    Pair<Game, Pair<Integer, Integer>> stay(final Game game);
 
     Optional<Game> getActiveGame(final String deviceId, final Optional<UUID> token);
 
