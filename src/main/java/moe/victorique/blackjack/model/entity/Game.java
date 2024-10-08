@@ -1,6 +1,7 @@
-package moe.victorique.blackjack.entity;
+package moe.victorique.blackjack.model.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Entity
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Game {
 
     public Game(

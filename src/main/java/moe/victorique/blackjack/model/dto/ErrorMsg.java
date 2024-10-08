@@ -1,4 +1,4 @@
-package moe.victorique.blackjack.dto;
+package moe.victorique.blackjack.model.dto;
 
 import lombok.NonNull;
 

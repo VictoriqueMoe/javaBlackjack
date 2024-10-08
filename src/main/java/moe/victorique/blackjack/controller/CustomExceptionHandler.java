@@ -1,7 +1,7 @@
 package moe.victorique.blackjack.controller;
 
 import lombok.NonNull;
-import moe.victorique.blackjack.dto.ErrorMsg;
+import moe.victorique.blackjack.model.dto.ErrorMsg;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

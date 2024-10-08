@@ -2,7 +2,7 @@ package moe.victorique.blackjack.repo;
 
 import lombok.NonNull;
 import moe.victorique.blackjack.constants.PlayStatus;
-import moe.victorique.blackjack.entity.Game;
+import moe.victorique.blackjack.model.entity.Game;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

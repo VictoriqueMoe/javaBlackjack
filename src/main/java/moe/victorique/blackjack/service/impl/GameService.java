@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moe.victorique.blackjack.constants.Action;
 import moe.victorique.blackjack.constants.PlayStatus;
-import moe.victorique.blackjack.entity.Game;
+import moe.victorique.blackjack.model.StayResponse;
+import moe.victorique.blackjack.model.entity.Game;
 import moe.victorique.blackjack.repo.GameRepository;
 import moe.victorique.blackjack.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -102,7 +102,7 @@ public class GameService implements IUserService {
     }
 
     @Override
-    public Pair<Game, Pair<Integer, Integer>> stay(final @NonNull Game game) {
+    public StayResponse stay(final @NonNull Game game) {
         while (this.calculateScore(game.dealerCards) < 17) {
             game.dealerCards.add(game.deck.removeLast());
         }
@@ -128,19 +128,13 @@ public class GameService implements IUserService {
             this.statService.updateStats(game.device, Action.DRAW);
         }
 
-        return Pair.of(this.repo.save(game), Pair.of(playerScore, dealerScore));
-
+        return new StayResponse(this.repo.save(game), playerScore, dealerScore);
     }
 
     @Override
     public Optional<Game> getActiveGame(final @NonNull String deviceId, final @Nullable UUID token) {
         final var status = PlayStatus.Playing;
         return token == null ? this.repo.findByDeviceAndStatus(deviceId, status) : this.repo.findByTokenAndStatus(token, status);
-    }
-
-    @Override
-    public Optional<Game> getGameFromToken(final @NonNull UUID token) {
-        return this.repo.findById(token);
     }
 
     @Override

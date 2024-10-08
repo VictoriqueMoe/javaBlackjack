@@ -2,7 +2,7 @@ package moe.victorique.blackjack.service;
 
 import lombok.NonNull;
 import moe.victorique.blackjack.constants.Action;
-import moe.victorique.blackjack.entity.Stat;
+import moe.victorique.blackjack.model.entity.Stat;
 
 import java.util.Optional;
 

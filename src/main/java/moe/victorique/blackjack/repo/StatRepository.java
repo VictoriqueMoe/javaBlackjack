@@ -1,7 +1,7 @@
 package moe.victorique.blackjack.repo;
 
 
-import moe.victorique.blackjack.entity.Stat;
+import moe.victorique.blackjack.model.entity.Stat;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package moe.victorique.blackjack.entity;
+package moe.victorique.blackjack.model.entity;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.AttributeConverter;

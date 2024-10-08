@@ -6,9 +6,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moe.victorique.blackjack.annotations.DeviceId;
-import moe.victorique.blackjack.dto.ResponseMsg;
-import moe.victorique.blackjack.dto.StatusMsg;
-import moe.victorique.blackjack.entity.Game;
+import moe.victorique.blackjack.model.dto.ResponseMsg;
+import moe.victorique.blackjack.model.dto.StatusMsg;
+import moe.victorique.blackjack.model.entity.Game;
+import moe.victorique.blackjack.service.IStatService;
 import moe.victorique.blackjack.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,9 +32,26 @@ public class GameController {
 
     private final IUserService service;
 
+    private final IStatService statService;
+
+    @GetMapping(value = "/stay", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseMsg stay(
+            final @NonNull @RequestParam Optional<UUID> token,
+            final @NonNull @Parameter(hidden = true) @DeviceId String deviceId
+    ) {
+        return this.service
+                .getActiveGame(deviceId, token.orElse(null))
+                .map(service::stay)
+                .map(stayResponse -> this.buildFromGame(stayResponse.game(), stayResponse.playerScore(), stayResponse.dealerScore()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No game is in progress"));
+    }
+
     @GetMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     public StatusMsg getStats(final @NonNull @Parameter(hidden = true) @DeviceId String deviceId) {
-        return null;
+        return this.statService
+                .getAllStat(deviceId)
+                .map(StatusMsg::fromStat)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No stats found for device"));
     }
 
     @GetMapping(value = "/history", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,8 +1,8 @@
-package moe.victorique.blackjack.dto;
+package moe.victorique.blackjack.model.dto;
 
 import lombok.NonNull;
 import moe.victorique.blackjack.constants.PlayStatus;
-import moe.victorique.blackjack.entity.Game;
+import moe.victorique.blackjack.model.entity.Game;
 
 import java.util.List;
 import java.util.UUID;

@@ -5,6 +5,7 @@ import lombok.NonNull;
 import moe.victorique.blackjack.annotations.DeviceId;
 import moe.victorique.blackjack.utils.Utils;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -35,7 +36,7 @@ public class RequestIpArgumentResolverEngine implements HandlerMethodArgumentRes
         }
 
         final var ipAddress = getIpAddress(request);
-        final var ua = request.getHeader("User-Agent");
+        final var ua = request.getHeader(HttpHeaders.USER_AGENT);
         return getDeviceId(ipAddress, ua);
     }
 

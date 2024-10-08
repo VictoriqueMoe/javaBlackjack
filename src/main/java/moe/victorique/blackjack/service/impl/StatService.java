@@ -3,7 +3,7 @@ package moe.victorique.blackjack.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import moe.victorique.blackjack.constants.Action;
-import moe.victorique.blackjack.entity.Stat;
+import moe.victorique.blackjack.model.entity.Stat;
 import moe.victorique.blackjack.repo.StatRepository;
 import moe.victorique.blackjack.service.IStatService;
 import org.springframework.beans.factory.annotation.Autowired;
