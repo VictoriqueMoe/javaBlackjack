@@ -33,6 +33,24 @@ public class GameController {
 
     private final IUserService service;
 
+    @GetMapping(value = "/history", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ResponseMsg>> getHistory(final HttpServletRequest request) {
+        final var deviceId = getDeviceId(request);
+        final var games = this.service
+                .getAllGames(deviceId)
+                .stream()
+                .map(game -> this.buildFromGame(
+                                game,
+                                this.service.calculateScore(game.playerCards),
+                                this.service.calculateScore(game.dealerCards)
+                        )
+                )
+                .toList();
+
+        return ResponseEntity.ok(games);
+    }
+
+
     @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseMsg> hit(
             final @RequestParam Optional<UUID> token,
