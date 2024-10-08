@@ -3,13 +3,12 @@ package moe.victorique.blackjack.service.impl;
 import jakarta.annotation.Nullable;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moe.victorique.blackjack.constants.Action;
 import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.entity.Game;
 import moe.victorique.blackjack.repo.GameRepository;
 import moe.victorique.blackjack.service.IUserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,8 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class GameService implements IUserService {
-
-    private final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     private final GameRepository repo;
 
@@ -89,11 +87,11 @@ public class GameService implements IUserService {
     @Override
     public Game hit(final @NonNull Game game) {
         game.playerCards.add(game.deck.removeLast());
-        this.logger.info("HIT: {}", game.token);
+        log.info("HIT: {}", game.token);
 
         if (this.calculateScore(game.playerCards) > 21) {
             game.status = PlayStatus.Bust;
-            this.logger.info("BUST");
+            log.info("BUST");
         }
 
         if (game.status == PlayStatus.Bust) {
@@ -114,19 +112,19 @@ public class GameService implements IUserService {
 
         if (dealerScore > 21) {
             game.status = PlayStatus.DealerBust;
-            this.logger.info("DEALER BUST");
+            log.info("DEALER BUST");
             this.statService.updateStats(game.device, Action.WIN);
         } else if (playerScore > dealerScore) {
             game.status = PlayStatus.PlayerWins;
-            this.logger.info("WIN");
+            log.info("WIN");
             this.statService.updateStats(game.device, Action.WIN);
         } else if (dealerScore > playerScore) {
             game.status = PlayStatus.DealerWins;
-            this.logger.info("LOSE");
+            log.info("LOSE");
             this.statService.updateStats(game.device, Action.LOSE);
         } else {
             game.status = PlayStatus.Draw;
-            this.logger.info("DRAW");
+            log.info("DRAW");
             this.statService.updateStats(game.device, Action.DRAW);
         }
 
@@ -136,7 +134,7 @@ public class GameService implements IUserService {
 
     @Override
     public Optional<Game> getActiveGame(final @NonNull String deviceId, final @Nullable UUID token) {
-        final PlayStatus status = PlayStatus.Playing;
+        final var status = PlayStatus.Playing;
         return token == null ? this.repo.findByDeviceAndStatus(deviceId, status) : this.repo.findByTokenAndStatus(token, status);
     }
 

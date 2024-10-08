@@ -4,6 +4,7 @@ package moe.victorique.blackjack.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moe.victorique.blackjack.dto.ResponseMsg;
 import moe.victorique.blackjack.entity.Game;
 import moe.victorique.blackjack.service.IUserService;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/game")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class GameController {
 
     private final Logger logger = LoggerFactory.getLogger(GameController.class);
@@ -69,8 +71,7 @@ public class GameController {
     public ResponseEntity<ResponseMsg> deal(final @NonNull HttpServletRequest request) {
         final var deviceId = getDeviceId(request);
 
-        this.logger.info("DEAL: {}", deviceId);
-
+        log.info("DEAL: {}", deviceId);
         return service.getActiveGame(deviceId, null)
                 .or(() -> Optional.of(this.service.newGame(deviceId)))
                 .map(this::buildFromGame)
