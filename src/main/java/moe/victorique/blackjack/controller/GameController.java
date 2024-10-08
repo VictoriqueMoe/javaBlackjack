@@ -2,6 +2,7 @@ package moe.victorique.blackjack.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import moe.victorique.blackjack.dto.ResponseMsg;
 import moe.victorique.blackjack.entity.Game;
@@ -34,7 +35,7 @@ public class GameController {
     private final IUserService service;
 
     @GetMapping(value = "/history", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ResponseMsg>> getHistory(final HttpServletRequest request) {
+    public ResponseEntity<List<ResponseMsg>> getHistory(final @NonNull HttpServletRequest request) {
         final var deviceId = getDeviceId(request);
         final var games = this.service
                 .getAllGames(deviceId)
@@ -53,11 +54,11 @@ public class GameController {
 
     @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseMsg> hit(
-            final @RequestParam Optional<UUID> token,
-            final HttpServletRequest request
+            final @NonNull @RequestParam Optional<UUID> token,
+            final @NonNull HttpServletRequest request
     ) {
         final var deviceId = getDeviceId(request);
-        return this.service.getActiveGame(deviceId, token)
+        return this.service.getActiveGame(deviceId, token.orElse(null))
                 .map(service::hit)
                 .map(this::buildFromGame)
                 .map(ResponseEntity::ok)
@@ -65,19 +66,19 @@ public class GameController {
     }
 
     @GetMapping(value = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseMsg> deal(final HttpServletRequest request) {
+    public ResponseEntity<ResponseMsg> deal(final @NonNull HttpServletRequest request) {
         final var deviceId = getDeviceId(request);
 
         this.logger.info("DEAL: {}", deviceId);
 
-        return service.getActiveGame(deviceId, Optional.empty())
+        return service.getActiveGame(deviceId, null)
                 .or(() -> Optional.of(this.service.newGame(deviceId)))
                 .map(this::buildFromGame)
                 .map(ResponseEntity::ok)
                 .get();
     }
 
-    private String getDeviceId(final HttpServletRequest request) {
+    private String getDeviceId(final @NonNull HttpServletRequest request) {
         final var ip = request.getRemoteAddr();
         final var userAgent = request.getHeader("User-Agent");
         try {
@@ -87,12 +88,12 @@ public class GameController {
         }
     }
 
-    private ResponseMsg buildFromGame(final Game game) {
+    private ResponseMsg buildFromGame(final @NonNull Game game) {
         return ResponseMsg.fromGame(game, this.service.calculateScore(game.playerCards), 0, List.of());
     }
 
     private ResponseMsg buildFromGame(
-            final Game game,
+            final @NonNull Game game,
             final int handValue,
             final int dealerValue
     ) {

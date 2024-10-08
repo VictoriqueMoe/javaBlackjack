@@ -1,5 +1,7 @@
 package moe.victorique.blackjack.service;
 
+import jakarta.annotation.Nullable;
+import lombok.NonNull;
 import moe.victorique.blackjack.entity.Game;
 import org.springframework.data.util.Pair;
 
@@ -8,17 +10,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IUserService {
-    Game newGame(final String deviceId);
+    Game newGame(final @NonNull String deviceId);
 
-    int calculateScore(final List<String> cards);
+    int calculateScore(final @NonNull List<String> cards);
 
-    Game hit(final Game game);
+    Game hit(final @NonNull Game game);
 
-    Pair<Game, Pair<Integer, Integer>> stay(final Game game);
+    Pair<Game, Pair<Integer, Integer>> stay(final @NonNull Game game);
 
-    Optional<Game> getActiveGame(final String deviceId, final Optional<UUID> token);
+    Optional<Game> getActiveGame(final @NonNull String deviceId, final @Nullable UUID token);
 
-    Optional<Game> getGameFromToken(final UUID token);
+    Optional<Game> getGameFromToken(final @NonNull UUID token);
 
-    List<Game> getAllGames(final String deviceId);
+    List<Game> getAllGames(final @NonNull String deviceId);
 }

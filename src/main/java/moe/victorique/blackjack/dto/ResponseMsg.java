@@ -1,5 +1,6 @@
 package moe.victorique.blackjack.dto;
 
+import lombok.NonNull;
 import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.entity.Game;
 
@@ -7,19 +8,19 @@ import java.util.List;
 import java.util.UUID;
 
 public record ResponseMsg(
-        UUID token,
-        String device,
-        List<String> cards,
-        List<String> dealerCards,
+        @NonNull UUID token,
+        @NonNull String device,
+        @NonNull List<String> cards,
+        @NonNull List<String> dealerCards,
         int handValue,
         int dealerValue,
-        PlayStatus playStatus
+        @NonNull PlayStatus playStatus
 ) {
     public static ResponseMsg fromGame(
-            final Game game,
+            final @NonNull Game game,
             final int handValue,
             final int dealerValue,
-            final List<String> deck
+            final @NonNull List<String> deck
     ) {
         return new ResponseMsg(
                 game.token,

@@ -1,5 +1,6 @@
 package moe.victorique.blackjack.service.impl;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import moe.victorique.blackjack.constants.Action;
 import moe.victorique.blackjack.entity.Stat;
@@ -17,7 +18,7 @@ public class StatService implements IStatService {
     private final StatRepository repo;
 
     @Override
-    public Stat updateStats(String deviceId, Action action) {
+    public Stat updateStats(final @NonNull String deviceId, final @NonNull Action action) {
         return repo
                 .findById(deviceId)
                 .or(() -> Optional.of(new Stat(deviceId, 0, 0, 0)))
@@ -33,7 +34,7 @@ public class StatService implements IStatService {
     }
 
     @Override
-    public Optional<Stat> getAllStat(String deviceId) {
+    public Optional<Stat> getAllStat(final @NonNull String deviceId) {
         return repo.findById(deviceId);
     }
 }

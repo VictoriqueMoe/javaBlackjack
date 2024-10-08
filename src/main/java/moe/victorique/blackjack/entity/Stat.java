@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -15,6 +16,7 @@ public class Stat {
 
     @Id
     @Column(columnDefinition = "TEXT")
+    @NonNull
     public String device;
 
     @Column(columnDefinition = "INTEGER")

@@ -1,5 +1,6 @@
 package moe.victorique.blackjack.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import moe.victorique.blackjack.constants.PlayStatus;
@@ -9,7 +10,7 @@ import moe.victorique.blackjack.constants.PlayStatus;
 public class PlayStatusConverter implements AttributeConverter<PlayStatus, String> {
 
     @Override
-    public String convertToDatabaseColumn(final PlayStatus playStatus) {
+    public String convertToDatabaseColumn(final @Nullable PlayStatus playStatus) {
         if (playStatus == null) {
             return null;
         }
@@ -17,7 +18,7 @@ public class PlayStatusConverter implements AttributeConverter<PlayStatus, Strin
     }
 
     @Override
-    public PlayStatus convertToEntityAttribute(final String status) {
+    public PlayStatus convertToEntityAttribute(final @Nullable String status) {
         if (status == null) {
             return null;
         }

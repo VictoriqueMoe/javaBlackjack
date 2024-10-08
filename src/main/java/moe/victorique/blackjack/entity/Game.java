@@ -2,6 +2,7 @@ package moe.victorique.blackjack.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import moe.victorique.blackjack.constants.PlayStatus;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,8 +20,8 @@ import java.util.UUID;
 public class Game {
 
     public Game(
-            final String deviceId,
-            final PlayStatus status
+            final @NonNull String deviceId,
+            final @NonNull PlayStatus status
     ) {
         this.device = deviceId;
         this.status = status;
@@ -29,29 +30,36 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "TEXT")
+    @NonNull
     public UUID token;
 
     @Column(columnDefinition = "TEXT")
+    @NonNull
     public String device;
 
     @Column(columnDefinition = "TEXT")
     @Convert(converter = PlayStatusConverter.class)
+    @NonNull
     public PlayStatus status;
 
     @Column(columnDefinition = "integer")
     @CreationTimestamp
+    @NonNull
     public Instant createdOn;
 
     @Column
     @JdbcTypeCode(SqlTypes.JSON)
+    @NonNull
     public List<String> deck = new ArrayList<>();
 
     @Column
     @JdbcTypeCode(SqlTypes.JSON)
+    @NonNull
     public List<String> dealerCards = new ArrayList<>();
 
     @Column
     @JdbcTypeCode(SqlTypes.JSON)
+    @NonNull
     public List<String> playerCards = new ArrayList<>();
 
 }

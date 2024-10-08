@@ -1,5 +1,7 @@
 package moe.victorique.blackjack.service.impl;
 
+import jakarta.annotation.Nullable;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import moe.victorique.blackjack.constants.Action;
 import moe.victorique.blackjack.constants.PlayStatus;
@@ -12,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -51,15 +51,15 @@ public class GameService implements IUserService {
     );
 
     @Override
-    public Game newGame(final String deviceId) {
-        var newGame = new Game(deviceId, PlayStatus.Playing);
+    public Game newGame(final @NonNull String deviceId) {
+        final var newGame = new Game(deviceId, PlayStatus.Playing);
         this.createDeck(newGame);
         this.deal(newGame);
         return this.repo.save(newGame);
     }
 
     @Override
-    public int calculateScore(final List<String> cards) {
+    public int calculateScore(final @NonNull List<String> cards) {
         var retVal = 0;
         var hasAce = false;
         for (final var card : cards) {
@@ -87,7 +87,7 @@ public class GameService implements IUserService {
     }
 
     @Override
-    public Game hit(final Game game) {
+    public Game hit(final @NonNull Game game) {
         game.playerCards.add(game.deck.removeLast());
         this.logger.info("HIT: {}", game.token);
 
@@ -104,7 +104,7 @@ public class GameService implements IUserService {
     }
 
     @Override
-    public Pair<Game, Pair<Integer, Integer>> stay(final Game game) {
+    public Pair<Game, Pair<Integer, Integer>> stay(final @NonNull Game game) {
         while (this.calculateScore(game.dealerCards) < 17) {
             game.dealerCards.add(game.deck.removeLast());
         }
@@ -135,20 +135,18 @@ public class GameService implements IUserService {
     }
 
     @Override
-    public Optional<Game> getActiveGame(final String deviceId, final Optional<UUID> token) {
+    public Optional<Game> getActiveGame(final @NonNull String deviceId, final @Nullable UUID token) {
         final PlayStatus status = PlayStatus.Playing;
-        return token
-                .map(t -> this.repo.findByTokenAndStatus(t, status))
-                .orElseGet(() -> this.repo.findByDeviceAndStatus(deviceId, status));
+        return token == null ? this.repo.findByDeviceAndStatus(deviceId, status) : this.repo.findByTokenAndStatus(token, status);
     }
 
     @Override
-    public Optional<Game> getGameFromToken(final UUID token) {
+    public Optional<Game> getGameFromToken(final @NonNull UUID token) {
         return this.repo.findById(token);
     }
 
     @Override
-    public List<Game> getAllGames(final String deviceId) {
+    public List<Game> getAllGames(final @NonNull String deviceId) {
         return this.repo.findAllByDeviceAndStatusNot(deviceId, PlayStatus.Playing);
     }
 
@@ -158,22 +156,17 @@ public class GameService implements IUserService {
                 game.deck.add(suite + face);
             }
         }
-        for (var i = 0; i < game.deck.size(); i++) {
-            var j = (int) (Math.random() * game.deck.size());
-            var originalCard = game.deck.get(i);
-            game.deck.set(i, game.deck.get(j));
-            game.deck.set(j, originalCard);
-        }
+        Collections.shuffle(game.deck, new Random());
     }
 
-    private void deal(final Game game) {
+    private void deal(final @NonNull Game game) {
         game.playerCards.add(game.deck.removeLast());
         game.dealerCards.add(game.deck.removeLast());
         game.playerCards.add(game.deck.removeLast());
         game.dealerCards.add(game.deck.removeLast());
     }
 
-    private int getNumberFromCard(final String card) {
+    private int getNumberFromCard(final @NonNull String card) {
         try {
             return Integer.parseInt(card.replaceAll("[^0-9]", ""));
         } catch (final NumberFormatException e) {
@@ -181,7 +174,7 @@ public class GameService implements IUserService {
         }
     }
 
-    private Game doBust(final Game game) {
+    private Game doBust(final @NonNull Game game) {
         statService.updateStats(game.device, Action.LOSE);
         return repo.save(game);
     }
