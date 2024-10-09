@@ -58,29 +58,25 @@ public class GameService implements IUserService {
 
     @Override
     public int calculateScore(final @NonNull List<String> cards) {
-        var retVal = 0;
-        var hasAce = false;
+        int retVal = 0;
+        int aceCount = 0;
+
         for (final var card : cards) {
-            retVal += getNumberFromCard(card);
+            int cardValue = getNumberFromCard(card);
             if (card.contains("J") || card.contains("Q") || card.contains("K")) {
-                retVal += 10;
-                continue;
+                cardValue = 10;
+            } else if (card.contains("A")) {
+                aceCount++;
+                cardValue = 11;
             }
-            if (card.contains("A")) {
-                hasAce = true;
-            }
+
+            retVal += cardValue;
         }
-        if (hasAce) {
-            for (final var card : cards) {
-                if (card.contains("A")) {
-                    if (retVal + 11 > 21) {
-                        retVal += 1;
-                    } else {
-                        retVal += 11;
-                    }
-                }
-            }
+        while (retVal > 21 && aceCount > 0) {
+            retVal -= 10;
+            aceCount--;
         }
+
         return retVal;
     }
 
