@@ -58,8 +58,8 @@ public class GameService implements IUserService {
 
     @Override
     public int calculateScore(final @NonNull List<String> cards) {
-        int retVal = 0;
-        int aceCount = 0;
+        var retVal = 0;
+        var aceCount = 0;
 
         for (final var card : cards) {
             int cardValue = getNumberFromCard(card);

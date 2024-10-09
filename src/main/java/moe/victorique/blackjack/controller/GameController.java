@@ -90,7 +90,7 @@ public class GameController {
     }
 
     private ResponseMsg buildFromGame(final @NonNull Game game) {
-        return ResponseMsg.fromGame(game, this.service.calculateScore(game.playerCards), 0, List.of());
+        return ResponseMsg.fromGame(game, this.service.calculateScore(game.playerCards), 0);
     }
 
     private ResponseMsg buildFromGame(
@@ -98,6 +98,6 @@ public class GameController {
             final int handValue,
             final int dealerValue
     ) {
-        return ResponseMsg.fromGame(game, handValue, dealerValue, game.deck);
+        return ResponseMsg.fromGame(game, handValue, dealerValue);
     }
 }
