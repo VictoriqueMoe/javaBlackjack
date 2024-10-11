@@ -14,10 +14,7 @@ import moe.victorique.blackjack.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -34,7 +31,7 @@ public class GameController {
 
     private final IStatService statService;
 
-    @GetMapping(value = "/stay", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/stay", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMsg stay(
             final @NonNull @RequestParam Optional<UUID> token,
             final @NonNull @Parameter(hidden = true) @DeviceId String deviceId
@@ -69,7 +66,7 @@ public class GameController {
     }
 
 
-    @GetMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/hit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMsg hit(
             final @NonNull @RequestParam Optional<UUID> token,
             final @NonNull @Parameter(hidden = true) @DeviceId String deviceId
@@ -80,7 +77,7 @@ public class GameController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No active game found"));
     }
 
-    @GetMapping(value = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/deal", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMsg deal(final @NonNull @Parameter(hidden = true) @DeviceId String deviceId) {
         log.info("DEAL: {}", deviceId);
         return service.getActiveGame(deviceId, null)

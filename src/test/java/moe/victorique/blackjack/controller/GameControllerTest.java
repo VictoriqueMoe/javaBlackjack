@@ -49,7 +49,7 @@ public class GameControllerTest {
                 List.of(),
                 List.of()
         );
-        final var expectedResponse = List.of(ResponseMsg.fromGame(game, 0, 0, List.of()));
+        final var expectedResponse = List.of(ResponseMsg.fromGame(game, 0, 0));
 
         Mockito.when(mockUserService.getAllGames(deviceId)).thenReturn(List.of(game));
         final var response = mockMvc.perform(get("/game/history")
