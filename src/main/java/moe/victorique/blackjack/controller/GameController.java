@@ -20,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/game")
@@ -57,12 +56,7 @@ public class GameController {
             final @NonNull @Parameter(hidden = true) @DeviceId String deviceId,
             final @NonNull @PathVariable Optional<UUID> token
     ) {
-        var deleted = new AtomicBoolean(false);
-        token.ifPresentOrElse(
-                uuid -> deleted.set(this.service.deleteGame(null, uuid)),
-                () -> deleted.set(this.service.deleteGame(deviceId, null))
-        );
-        return deleted.get();
+        return this.service.deleteGame(deviceId, token.orElse(null));
     }
 
     @GetMapping(value = "/history", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -139,8 +139,8 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public boolean deleteGame(final @Nullable String deviceId, final @Nullable UUID token) {
-        return repo.deleteByDeviceOrToken(deviceId, token) > 0;
+    public boolean deleteGame(final @NonNull String deviceId, final @Nullable UUID token) {
+        return (token == null ? repo.deleteByDeviceOrToken(deviceId, null) : repo.deleteByDeviceOrToken(null, token)) > 0;
     }
 
     private void createDeck(final Game game) {

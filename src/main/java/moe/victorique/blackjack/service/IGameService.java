@@ -22,5 +22,5 @@ public interface IGameService {
 
     List<Game> getAllGames(final @NonNull String deviceId);
 
-    boolean deleteGame(final @Nullable String deviceId, final @Nullable UUID token);
+    boolean deleteGame(final @NonNull String deviceId, final @Nullable UUID token);
 }
