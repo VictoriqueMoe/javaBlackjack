@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.model.dto.ResponseMsg;
 import moe.victorique.blackjack.model.entity.Game;
-import moe.victorique.blackjack.service.IUserService;
+import moe.victorique.blackjack.service.IGameService;
 import moe.victorique.blackjack.utils.Utils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,7 +31,7 @@ public class GameControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private IUserService mockUserService;
+    private IGameService mockUserService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

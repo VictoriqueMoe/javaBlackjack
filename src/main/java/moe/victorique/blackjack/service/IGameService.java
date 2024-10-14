@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IUserService {
+public interface IGameService {
     Game newGame(final @NonNull String deviceId);
 
     int calculateScore(final @NonNull List<String> cards);
@@ -21,4 +21,6 @@ public interface IUserService {
     Optional<Game> getActiveGame(final @NonNull String deviceId, final @Nullable UUID token);
 
     List<Game> getAllGames(final @NonNull String deviceId);
+
+    boolean deleteGame(final @Nullable String deviceId, final @Nullable UUID token);
 }

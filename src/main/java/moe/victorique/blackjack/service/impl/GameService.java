@@ -9,7 +9,7 @@ import moe.victorique.blackjack.constants.PlayStatus;
 import moe.victorique.blackjack.model.StayResponse;
 import moe.victorique.blackjack.model.entity.Game;
 import moe.victorique.blackjack.repo.GameRepository;
-import moe.victorique.blackjack.service.IUserService;
+import moe.victorique.blackjack.service.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class GameService implements IUserService {
+public class GameService implements IGameService {
 
     private final GameRepository repo;
 
@@ -136,6 +136,11 @@ public class GameService implements IUserService {
     @Override
     public List<Game> getAllGames(final @NonNull String deviceId) {
         return this.repo.findAllByDeviceAndStatusNot(deviceId, PlayStatus.Playing);
+    }
+
+    @Override
+    public boolean deleteGame(final @Nullable String deviceId, final @Nullable UUID token) {
+        return repo.deleteByDeviceOrToken(deviceId, token) > 0;
     }
 
     private void createDeck(final Game game) {

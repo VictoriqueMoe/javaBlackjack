@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.NoSuchAlgorithmException;
 
-public class RequestIpArgumentResolverEngine implements HandlerMethodArgumentResolver {
+public class RequestDeviceIdArgumentResolverEngine implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(@NonNull final MethodParameter parameter) {

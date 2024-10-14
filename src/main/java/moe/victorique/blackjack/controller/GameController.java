@@ -9,8 +9,8 @@ import moe.victorique.blackjack.annotations.DeviceId;
 import moe.victorique.blackjack.model.dto.ResponseMsg;
 import moe.victorique.blackjack.model.dto.StatusMsg;
 import moe.victorique.blackjack.model.entity.Game;
+import moe.victorique.blackjack.service.IGameService;
 import moe.victorique.blackjack.service.IStatService;
-import moe.victorique.blackjack.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/game")
@@ -27,7 +28,7 @@ import java.util.UUID;
 @Slf4j
 public class GameController {
 
-    private final IUserService service;
+    private final IGameService service;
 
     private final IStatService statService;
 
@@ -49,6 +50,19 @@ public class GameController {
                 .getAllStat(deviceId)
                 .map(StatusMsg::fromStat)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No stats found for device"));
+    }
+
+    @DeleteMapping(value = {"/", "/{token}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean deleteGame(
+            final @NonNull @Parameter(hidden = true) @DeviceId String deviceId,
+            final @NonNull @PathVariable Optional<UUID> token
+    ) {
+        var deleted = new AtomicBoolean(false);
+        token.ifPresentOrElse(
+                uuid -> deleted.set(this.service.deleteGame(null, uuid)),
+                () -> deleted.set(this.service.deleteGame(deviceId, null))
+        );
+        return deleted.get();
     }
 
     @GetMapping(value = "/history", produces = MediaType.APPLICATION_JSON_VALUE)
