@@ -17,6 +17,7 @@ This API contains 5 interactions.
 3. [Stay](#stay)
 4. [Stats](#stats)
 5. [History](#history)
+6. [Delete](#delete)
 
 > **NOTE:** Depending on your shell, you may need to remove the quotes around the URLS in the CURL commands
 
@@ -114,8 +115,24 @@ curl 'http://localhost:8080/game/history'
 
 ```json
 [
-  {"token":"6c359eb8-16bb-406a-93ff-6fbdaf1e5519",device:"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["6♣","5♦","10♥"],"dealerCards":["7♠","5♥","Q♣"],"handValue":21,"dealerValue":22,"status":"Dealer Bust"},
-  {"token":"de3db63b-4363-4c33-80cc-3ff51f02ea81",device:"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["9♠","5♥","7♥"],"dealerCards":["Q♥","5♠","10♥"],"handValue":21,"dealerValue":25,"status":"Dealer Bust"},
-  {"token":"420b767b-9506-47cc-a1e8-ed11d513fd30",device:"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["4♣","10♣","9♦"],"dealerCards":["6♣","3♥"],"handValue":23,"dealerValue":9,"status":"Bust"}
+  {"token":"6c359eb8-16bb-406a-93ff-6fbdaf1e5519","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["6♣","5♦","10♥"],"dealerCards":["7♠","5♥","Q♣"],"handValue":21,"dealerValue":22,"status":"Dealer Bust"},
+  {"token":"de3db63b-4363-4c33-80cc-3ff51f02ea81","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["9♠","5♥","7♥"],"dealerCards":["Q♥","5♠","10♥"],"handValue":21,"dealerValue":25,"status":"Dealer Bust"},
+  {"token":"420b767b-9506-47cc-a1e8-ed11d513fd30","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["4♣","10♣","9♦"],"dealerCards":["6♣","3♥"],"handValue":23,"dealerValue":9,"status":"Bust"}
 ]
+```
+
+### Delete<a id="delete"></a>
+This endpoint takes a parameter `sure` which must be set to true and will delete the game history for the device making the call.
+It can also take an option path component with the game token.  If token is specified then just that game will be deleted.
+
+> **NOTE:** If sure is not set to true, the history will not be deleted
+
+```shell
+curl -X 'DELETE' 'http://localhost:3000/delete?sure=true'
+
+curl -X 'DELETE' 'http://localhost:3000/delete/420b767b-9506-47cc-a1e8-ed11d513fd30?sure=true'
+```
+
+```json
+true
 ```
